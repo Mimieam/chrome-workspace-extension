@@ -112,8 +112,9 @@ class Popup extends Component {
               </Typography>
               { this.state.wID }
             </div>  
-            <div className={'flex-item top right'}>
-              <IconButton onClick={ this.onClick } style={ styles.customButton }>
+            <div className={ 'flex-item top right' }>
+              
+              <IconButton color="primary" onClick={ this.onClick }>
                 <AddToPhotosIcon/> 
               </IconButton>
             </div>  

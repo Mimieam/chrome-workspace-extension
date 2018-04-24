@@ -31,12 +31,13 @@ const styles = {
     
   },
   customButton: {
-    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-    borderRadius: 3,
-    border: 0,
-    color: 'white',
-    height: 48,
-    padding: '0 30px',
+    margin: 5,
+    // background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+    // borderRadius: 3,
+    // border: 0,
+    // color: 'white',
+    // height: 48,
+    // padding: '0 30px',
   }
 };
 
@@ -81,8 +82,8 @@ class StyledModal extends Component {
             // className={`flex-item`}
             helperText="All the tabs open in the current Window will become part of the new Workspace"
             />
-            <div className={ 'flex-item row right' }>
-              <IconButton
+            <div className={ 'flex-item row right space-between' }>
+            <Button variant="raised" color="primary" 
                  style={ styles.customButton}
                 onClick={ () => {
               console.log('IconButton clicked')
@@ -92,14 +93,14 @@ class StyledModal extends Component {
               this.handleClose()
             } }> 
             Save
-            </IconButton>
-              <IconButton
+            </Button>
+              <Button variant="raised" color="primary"
                 style={ styles.customButton}
                 onClick={ () => { 
               this.handleClose()
             } }>
               Cancel  
-            </IconButton>
+            </Button>
             </div>
         </div>
         </Modal>
