@@ -122,6 +122,7 @@
     }
   },
   "devDependencies": {
-    "babel-plugin-transform-regenerator": "^6.26.0"
+    "babel-plugin-transform-regenerator": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0"
   }
 }

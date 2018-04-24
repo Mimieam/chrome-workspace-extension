@@ -1,6 +1,13 @@
+// babel-env-disable
 {
   "presets": [
-    "env",
+    ["env",
+      {
+        "targets": {
+          "node": "current"
+        }
+      }
+    ],
     "react",
     "stage-0"
   ],

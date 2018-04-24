@@ -153,7 +153,7 @@ new CopyWebpackPlugin([
  * and the BackEnd in src/backgound/index.js
  */
  ```
- .babelrc seems to get overriden when running yarn ... not sure why... i didn't mofified anything in regard to babel except adding the runtime plugin. I blame the ejected CRA for that :P  
+ .babelrc seems to get overriden when running yarn ... not sure why... i didn't mofified anything in regard to babel except adding the runtime plugin.  I blame <s>the ejected CRA </s> [babel-env](https://github.com/yarnpkg/yarn/issues/4400) for that :P  
 ```
 
 {
@@ -205,3 +205,6 @@ document.body.appendChild (iframe);
 
 ```
 Anyway long story short for now when anything under contentscript/ is modified the app needs to be manually reloaded in chrome via the extension manager page.
+
+
+ReferenceError: regeneratorRuntime is not defined - https://github.com/babel/babel/issues/5085
