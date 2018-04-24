@@ -153,7 +153,7 @@ new CopyWebpackPlugin([
  * and the BackEnd in src/backgound/index.js
  */
  ```
- .babelrc seems to get overriden when running yarn ... not sure why... i didn't mofified anything in regard to babel except adding the runtime plugin.  I blame <s>the ejected CRA </s> [babel-env](https://github.com/yarnpkg/yarn/issues/4400) for that :P  
+ .babelrc seems to get overriden when running yarn ... not sure why... i didn't mofified anything in regard to babel except adding the runtime plugin.  I blame <s>the ejected CRA </s> [babel-env](https://github.com/yarnpkg/yarn/issues/4400) for that :P...  [solution](https://www.npmjs.com/package/babel-env) 
 ```
 
 {
