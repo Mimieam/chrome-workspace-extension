@@ -31,8 +31,10 @@ export class WorkSpaceManager {
     return allWS
   }
   openAWorkSpace(wsName) {
-    if (wsName in this.wsArr) {
-      localStorage.getItem(wsName)
+    console.log(wsName, this.wsArr, wsName in this.wsArr)
+    if (this.wsArr.includes(wsName)) {
+      const ws = localStorage.getItem(wsName)
+      console.log(ws)
     }
   }
   /**

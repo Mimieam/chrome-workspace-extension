@@ -98,6 +98,10 @@ class Popup extends Component {
     })
     console.log( 'done creating stuff')
   }
+  async openWS(name) {
+    const ws = await WSM.openAWorkSpace(name)
+    console.log('attempting to open ws :', name, ws)
+  }
 
   render() {
     const { classes } = this.props;
@@ -108,40 +112,30 @@ class Popup extends Component {
           <div className={ 'flex-item row fixed-header' }>
             <div className={ 'flex-item top center' }>
               <Typography variant="title" gutterBottom>
-                [WSp]
+                [ WorkSpace { this.state.wID } ]
               </Typography>
-              { this.state.wID }
+              
             </div>  
             <div className={ 'flex-item top right' }>
-              
               <IconButton color="primary" onClick={ this.onClick }>
                 <AddToPhotosIcon/> 
               </IconButton>
             </div>  
           </div>  
 
-          <div
-            className={ 'flex-item column' }
-            // style={{
-            // justifyContent: 'start',
-            // wordWrap: 'break-word',
-            // overflowX: 'hidden'
-            // }}
-          >
-          <div  className="flex-item row wrap"> 
-
-          { console.log(this.state.workspaces) }
-            {
-              this.state.workspaces.map((ws) => {
-                return <Workspace
-                  name={ ws.name }
-                  urls={ ws.tabs }
-                  onWorkspaceClick={(e)=> this.onWorkspaceClick(e)}
-                />
-              })
-            }  
-            
-          </div>
+          <div className={ 'flex-item column' }>
+            <div  className="flex-item row wrap"> 
+            { console.log(this.state.workspaces) }
+              {
+                this.state.workspaces.map((ws) => {
+                  return <Workspace
+                    name={ ws.name }
+                    urls={ ws.tabs }
+                    onWorkspaceClick={(e)=> this.onWorkspaceClick(e)}
+                  />
+                })
+              }  
+            </div>
           </div>
 
           </div>  
@@ -150,6 +144,7 @@ class Popup extends Component {
             onRef={ ref => (this.modal = ref) }
         />
         <WspSnackbar
+          onOpenHandler={this.openWS.bind(this)}
           onRef={ ref => (this.snack = ref) }
         />
       </MuiThemeProvider>  

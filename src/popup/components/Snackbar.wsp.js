@@ -39,8 +39,8 @@ class SimpleSnackbar extends React.Component {
     if (reason === 'clickaway') {
       return;
     }
-
-    this.setState({ open: false });
+    this.props.onOpenHandler(this.state.activeWorkspace.name)
+    // this.setState({ open: false });
   };
 
   update = () => {
