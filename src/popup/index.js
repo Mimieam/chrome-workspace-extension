@@ -103,8 +103,8 @@ class Popup extends Component {
     console.log('attempting to open ws :', name, ws)
     const tabsURLs = ws.tabs.map(t => t.url)
     // BUG - COntiniously open a new window...
-    // const newWindow = await GCWindows.createWindow(tabsURLs) 
-    // console.log('new Window created with Id: ', newWindow)
+    const newWindow = await GCWindows.createWindow(tabsURLs, true) 
+    console.log('new Window created with Id: ', newWindow)
   }
 
   render() {
