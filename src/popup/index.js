@@ -101,6 +101,10 @@ class Popup extends Component {
   async openWS(name) {
     const ws = await WSM.openAWorkSpace(name)
     console.log('attempting to open ws :', name, ws)
+    const tabsURLs = ws.tabs.map(t => t.url)
+    // BUG - COntiniously open a new window...
+    // const newWindow = await GCWindows.createWindow(tabsURLs) 
+    // console.log('new Window created with Id: ', newWindow)
   }
 
   render() {

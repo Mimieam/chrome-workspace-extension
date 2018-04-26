@@ -10,12 +10,35 @@ GCWindows.getLastFocused = async (populate=false) => {
   })
   return w
 }
+
 GCWindows.getCurrent = async (populate = false) => {
  let w = await new Promise((resolve) => {
    return chrome.windows.getCurrent({populate: populate}, t => resolve(t))
   })
   return w
 }
+/**
+ * This function create a new window with discared tabs if the discard
+ * flag is set to true
+ * 
+ * @param {array} urls - an array of strings
+ * @param {boolean} discard - a flag
+ */
+GCWindows.createWindow = async (urls = [], discard = false) => {
+  console.log(urls)
+  let w = await new Promise((resolve, reject) => {
+    return chrome.windows.create({ url: urls[0] }, async (newW) => { 
+      console.log(`New Windows Created with ID : ${ newW.id }`)
+      const _urls = urls.slice(1) // adding the other tabs..
+      const tabsPromiseArray = await _urls.map(
+        _url => GCTabs.createTabAtWindowID(_url, newW.id, discard)
+      )
+      await resolve(Promise.all(tabsPromiseArray))
+    })
+  })
+
+  return w
+}  
 
 GCTabs._query = async (options) => {  
   let w = await new Promise((resolve) => {
@@ -46,6 +69,27 @@ GCTabs.getLastActiveTabFromAGroupOfTabs =(tabs) => {
   let lastActiveTab = tabs.filter(_t => { return _t.active })[0]
   lastActiveTab = lastActiveTab ? lastActiveTab : tabs.splice(-1)[0]
   return lastActiveTab
+}
+
+
+GCTabs.createTabAtWindowID = (url, wID, discard=false) => {
+  let t = new Promise(resolve => {
+    chrome.tabs.create({ url: url, windowId: wID }, async tab => {
+      if (discard) {
+        chrome.tabs.onUpdated.addListener(async function listener (tabId, info) {
+          if (info.status === 'complete' && tabId === tab.id) {
+            await chrome.tabs.discard(tab.id, (discaredTab) => {
+              console.log('Discared Tab:', discaredTab)
+              console.log(`created & Unloaded from mem -> ${t.url}`)
+            })
+            chrome.tabs.onUpdated.removeListener(listener);
+            resolve(tab);
+          }
+        })
+      }
+    })
+  })
+  return t
 }
 
 

@@ -30,18 +30,28 @@ export class WorkSpaceManager {
     const allWS = this.wsArr
     return allWS
   }
-  openAWorkSpace(wsName) {
-    console.log(wsName, this.wsArr, wsName in this.wsArr)
+  /**
+   * returns a promise of a workspace object like so
+   * {
+      name: name,
+      tabs: deCompressedTabs
+    }
+   */
+  async openAWorkSpace(wsName) {
     if (this.wsArr.includes(wsName)) {
-      const ws = localStorage.getItem(wsName)
-      console.log(ws)
+      const compressed = await localStorage.getItem(wsName)
+      const formatted = await compressed ? decompressAndParse(compressed) : []
+      return {
+        name: wsName,
+        tabs: formatted
+      }  
     }
   }
   /**
    * returns a promise of an array of workspaces like so
    * [{
       name: name,
-      tabs: compressedTabs
+      tabs: deCompressedTabs
     }]
    */
   async getAllWorkSpace() { 

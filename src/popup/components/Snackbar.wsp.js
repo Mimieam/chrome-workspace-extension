@@ -35,14 +35,18 @@ class SimpleSnackbar extends React.Component {
     });
   };
 
-  handleOpen = (event, reason) => {
+  close = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-    this.props.onOpenHandler(this.state.activeWorkspace.name)
-    // this.setState({ open: false });
+    this.setState({ open: false });
   };
-
+  open = () => {
+    
+    console.log('Opening Working - ', this.state.activeWorkspace)
+    this.props.onOpenHandler(this.state.activeWorkspace.name)
+    this.setState({ open: false });
+  }
   update = () => {
     console.log('Updating Working - ', this.state.activeWorkspace)
   }
@@ -53,7 +57,7 @@ class SimpleSnackbar extends React.Component {
 
   snacksOptions = (classes) => {
     return [
-      <Button key="open" color="secondary" size="small" onClick={this.handleOpen}>
+      <Button key="open" color="secondary" size="small" onClick={this.open}>
         OPEN
       </Button>,
       <Button key="update" color="secondary" size="small" onClick={this.update}>
@@ -67,7 +71,7 @@ class SimpleSnackbar extends React.Component {
         aria-label="Close"
         color="inherit"
         className={classes.close}
-        onClick={this.handleOpen}
+        onClick={this.close}
       >
         <CloseIcon />
       </IconButton>,
@@ -85,8 +89,8 @@ class SimpleSnackbar extends React.Component {
             horizontal: 'left',
           }}
           open={this.state.open}
-          autoHideDuration={6000}
-          onClose={this.handleOpen}
+          autoHideDuration={3000}
+          onClose={this.close}
           SnackbarContentProps={{
             'aria-describedby': 'message-id',
           }}
