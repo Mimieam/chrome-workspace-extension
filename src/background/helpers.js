@@ -19,7 +19,7 @@ GCWindows.getCurrent = async (populate = false) => {
 }
 /**
  * This function create a new window with discared tabs if the discard
- * flag is set to true
+ * flag is set to true - note that the first and last tabs will not be discared
  * 
  * @param {array} urls - an array of strings
  * @param {boolean} discard - a flag
@@ -33,6 +33,7 @@ GCWindows.createWindow = async (urls = [], discard = false) => {
       const tabsPromiseArray = await _urls.map(
         _url => GCTabs.createTabAtWindowID(_url, newW.id, discard)
       )
+      // TODO: prevent discard of the very last tab 
       await resolve(Promise.all(tabsPromiseArray))
     })
   })
