@@ -52,6 +52,7 @@ class SimpleSnackbar extends React.Component {
   }
 
   delete = () => {
+    this.props.onDeleteHandler(this.state.activeWorkspace.name)
     console.log('Deleting Working - ', this.state.activeWorkspace)
   }
 

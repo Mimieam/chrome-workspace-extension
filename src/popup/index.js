@@ -102,9 +102,15 @@ class Popup extends Component {
     const ws = await WSM.openAWorkSpace(name)
     console.log('attempting to open ws :', name, ws)
     const tabsURLs = ws.tabs.map(t => t.url)
-    // BUG - COntiniously open a new window...
     const newWindow = await GCWindows.createWindow(tabsURLs, true) 
-    console.log('new Window created with Id: ', newWindow)
+    // console.log('new Window created with Id: ', newWindow)
+  }
+  async deleteWS(name) {
+    await WSM.removeWorkSpace(name)
+    await this.setState({
+      workspaces: this.state.workspaces.filter(item => item.name !== name)
+    })
+    // console.log('new Window created with Id: ', newWindow)
   }
 
   render() {
@@ -149,6 +155,7 @@ class Popup extends Component {
         />
         <WspSnackbar
           onOpenHandler={this.openWS.bind(this)}
+          onDeleteHandler={this.deleteWS.bind(this)}
           onRef={ ref => (this.snack = ref) }
         />
       </MuiThemeProvider>  

@@ -27,14 +27,21 @@ GCWindows.getCurrent = async (populate = false) => {
 GCWindows.createWindow = async (urls = [], discard = false) => {
   console.log(urls)
   let w = await new Promise((resolve, reject) => {
-    return chrome.windows.create({ url: urls[0] }, async (newW) => { 
+    return chrome.windows.create({ url: urls[0],  }, async (newW) => { 
       console.log(`New Windows Created with ID : ${ newW.id }`)
+      console.log(newW.tabs)
       const _urls = urls.slice(1) // adding the other tabs..
       const tabsPromiseArray = await _urls.map(
-        _url => GCTabs.createTabAtWindowID(_url, newW.id, discard)
+        (_url, idx) => {
+          if (idx == _urls.length - 1) {
+            return GCTabs.createTabAtWindowID(_url, newW.id, false)
+          } else {
+            return GCTabs.createTabAtWindowID(_url, newW.id, discard)
+          }
+        }
       )
       // TODO: prevent discard of the very last tab 
-      await resolve(Promise.all(tabsPromiseArray))
+      return await resolve(Promise.all(tabsPromiseArray))
     })
   })
 
