@@ -61,7 +61,7 @@ class SimpleSnackbar extends React.Component {
       <Button key="open" color="secondary" size="small" onClick={this.open}>
         OPEN
       </Button>,
-      <Button key="update" color="secondary" size="small" onClick={this.update}>
+      <Button disabled key="update" color="secondary" size="small" onClick={this.update}>
         UPDATE
       </Button>,
       <Button key="delete" color="secondary" size="small" onClick={this.delete}>

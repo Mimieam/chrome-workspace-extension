@@ -1,3 +1,4 @@
+import { deduplicateObjectArr } from './utils';
 
 export let GCWindows = {}
 export let GCTabs = {}
@@ -26,26 +27,27 @@ GCWindows.getCurrent = async (populate = false) => {
  */
 GCWindows.createWindow = async (urls = [], discard = false) => {
   console.log(urls)
-  let w = await new Promise((resolve, reject) => {
-    return chrome.windows.create({ url: urls[0],  }, async (newW) => { 
-      console.log(`New Windows Created with ID : ${ newW.id }`)
-      console.log(newW.tabs)
-      const _urls = urls.slice(1) // adding the other tabs..
-      const tabsPromiseArray = await _urls.map(
-        (_url, idx) => {
-          if (idx == _urls.length - 1) {
-            return GCTabs.createTabAtWindowID(_url, newW.id, false)
-          } else {
-            return GCTabs.createTabAtWindowID(_url, newW.id, discard)
-          }
-        }
-      )
-      // TODO: prevent discard of the very last tab 
-      return await resolve(Promise.all(tabsPromiseArray))
-    })
-  })
+  await GCTabs.recycleTabsAndCreateWindow(urls)
+  // let w = await new Promise((resolve, reject) => {
+  //   return chrome.windows.create({ url: urls[0],  }, async (newW) => { 
+  //     console.log(`New Windows Created with ID : ${ newW.id }`)
+  //     console.log(newW.tabs)
+  //     const _urls = urls.slice(1) // adding the other tabs..
+  //     const tabsPromiseArray = await _urls.map(
+  //       (_url, idx) => {
+  //         if (idx == _urls.length - 1) {
+  //           return GCTabs.createTabAtWindowID(_url, newW.id, false)
+  //         } else {
+  //           return GCTabs.createTabAtWindowID(_url, newW.id, discard)
+  //         }
+  //       }
+  //     )
+  //     // TODO: prevent discard of the very last tab 
+  //     return await resolve(Promise.all(tabsPromiseArray))
+  //   })
+  // })
 
-  return w
+  // return w
 }  
 
 GCTabs._query = async (options) => {  
@@ -79,6 +81,61 @@ GCTabs.getLastActiveTabFromAGroupOfTabs =(tabs) => {
   return lastActiveTab
 }
 
+function splitHostname(url) {
+  var result = {};
+  var regexParse = new RegExp('([a-z\-0-9]{2,63})\.([a-z\.]{2,5})$');
+  var urlParts = regexParse.exec(url);
+  result.domain = urlParts[1];
+  result.type = urlParts[2];
+  result.subdomain = url.replace(result.domain + '.' + result.type, '').slice(0, -1);;
+  return result;
+}
+
+
+
+/**
+ * This funciton takes in a array of url string and create a set of 
+ * regex pattern for each url, to match any tab similar to it
+ * 
+ * 
+ * @param {array} urls url string
+ */
+GCTabs.createURLSearchPatterns = (urls) => {
+  const _patterns = urls.map(u => {
+    const _uObj = splitHostname((new URL(u).hostname ))
+    console.log(_uObj)
+    // return `*.${_uObj.hostname}.*`
+  })
+  return _patterns
+}
+
+/**
+ * This function takes in a array of url string and tries to 
+ * find all existing tabs matching the url in the array 
+ * and gathers them in 1 Window. 
+ * Remaining urls which were not found are simply 
+ * added to the new windows as new Tabs
+ * @param {array} urls array of url strings
+ * @returns array of tabs id
+ */
+GCTabs.recycleTabsAndCreateWindow = (urls) => {
+  let t = new Promise(resolve => { 
+    chrome.tabs.query({ url: urls }, tabs => {
+      const recycledTabs = tabs.map(_t => {
+        return {
+          'id': _t.id,
+          'url': _t.url
+        }
+      })
+      GCTabs.createURLSearchPatterns(tabs.map(_t => _t.url))
+      
+      console.log('RecyclableTabs found => ',recycledTabs)
+      console.log('RecyclableTabs found => ',deduplicateObjectArr(recycledTabs, 'url'))
+      return resolve(recycledTabs)
+    }) 
+  })
+  return t
+}
 
 GCTabs.createTabAtWindowID = (url, wID, discard=false) => {
   let t = new Promise(resolve => {
@@ -87,8 +144,8 @@ GCTabs.createTabAtWindowID = (url, wID, discard=false) => {
         chrome.tabs.onUpdated.addListener(async function listener (tabId, info) {
           if (info.status === 'complete' && tabId === tab.id) {
             await chrome.tabs.discard(tab.id, (discaredTab) => {
-              console.log('Discared Tab:', discaredTab)
-              console.log(`created & Unloaded from mem -> ${t.url}`)
+              // console.log('Discared Tab:', discaredTab)
+              console.log(`created & Unloaded from mem -> ${tab.url}`)
             })
             chrome.tabs.onUpdated.removeListener(listener);
             resolve(tab);
@@ -100,6 +157,18 @@ GCTabs.createTabAtWindowID = (url, wID, discard=false) => {
   return t
 }
 
+
+  /**
+   * physicaly moves tabs around
+   *
+   * @param {Array} tabs - array of tabs IDs
+   * @param {Number} id - the id of a window
+   * @returns 
+   */ 
+
+GCTabs.move = (tabs, id)=> {
+  return chrome.tabs.move(tabs, {windowId:id, index:-1})
+}
 
 
 export const findAndLoadExtentionPageInNewBrowserTab = async (targetUrl) => {
