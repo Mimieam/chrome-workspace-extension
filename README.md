@@ -210,11 +210,11 @@ Anyway long story short for now when anything under contentscript/ is modified t
 ReferenceError: regeneratorRuntime is not defined - https://github.com/babel/babel/issues/5085
 
 
-╭───────────────────────────────╮
-│                               │
-│  Hi, I'm Miezan Echimane      │
-│  Want to get in touch?        │
-│    Reach out to               │
-│ miezan.echimane@gmail.com  :) │
-│                               │
-╰───────────────────────────────╯
+    ╭───────────────────────────────╮
+    │                               │
+    │  Hi, I'm Miezan Echimane      │
+    │  Want to get in touch?        │
+    │    Reach out to               │
+    │ miezan.echimane@gmail.com  :) │
+    │                               │
+    ╰───────────────────────────────╯
