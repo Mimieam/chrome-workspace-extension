@@ -25,9 +25,50 @@ GCWindows.getCurrent = async (populate = false) => {
  * @param {array} urls - an array of strings
  * @param {boolean} discard - a flag
  */
+GCWindows._createWindow = async (urls = [], discard = false) => {
+  let w = await new Promise((resolve, reject) => {
+    return chrome.windows.create({ url: urls[0],  }, async (newW) => { 
+      console.log(`New Windows Created with ID : ${ newW.id }`)
+      console.log(newW.tabs)
+      const _urls = urls.slice(1) // adding the other tabs..
+      const tabsPromiseArray = await _urls.map(
+        (_url, idx) => {
+          if (idx == _urls.length - 1) {
+            return GCTabs.createTabAtWindowID(_url, newW.id, false)
+          } else {
+            return GCTabs.createTabAtWindowID(_url, newW.id, discard)
+          }
+        }
+      )
+      // TODO: prevent discard of the very last tab 
+      return await resolve(Promise.all(tabsPromiseArray))
+    })
+  })
+
+  return w
+}  
+
+
+/**
+ * This function create a new window by recyling as many open tabs as possible 
+ * flag is set to true - note that the first and last tabs will not be discared
+ * 
+ * @param {array} urls - an array of strings
+ * @param {boolean} discard - a flag
+ */
 GCWindows.createWindow = async (urls = [], discard = false) => {
   console.log(urls)
-  await GCTabs.recycleTabsAndCreateWindow(urls)
+  const recycled = await GCTabs.recycleTabsAndCreateWindow(urls)
+
+  // remove recycled from urls list
+  const recycledURLs = recycled.map(t => t.url)
+
+  const tobeNewlyCreated = urls.filter((item, idx) =>  !recycledURLs.includes(item))
+
+  console.log('recycledURLs==>', recycledURLs)
+  console.log('tobeNewlyCreated==>', tobeNewlyCreated)
+
+
   // let w = await new Promise((resolve, reject) => {
   //   return chrome.windows.create({ url: urls[0],  }, async (newW) => { 
   //     console.log(`New Windows Created with ID : ${ newW.id }`)
@@ -116,7 +157,7 @@ GCTabs.createURLSearchPatterns = (urls) => {
  * Remaining urls which were not found are simply 
  * added to the new windows as new Tabs
  * @param {array} urls array of url strings
- * @returns array of tabs id
+ * @returns array of tabs object like {id: "", url: ""} 
  */
 GCTabs.recycleTabsAndCreateWindow = (urls) => {
   let t = new Promise(resolve => { 
@@ -127,10 +168,10 @@ GCTabs.recycleTabsAndCreateWindow = (urls) => {
           'url': _t.url
         }
       })
-      GCTabs.createURLSearchPatterns(tabs.map(_t => _t.url))
+      // GCTabs.createURLSearchPatterns(tabs.map(_t => _t.url))
       
       console.log('RecyclableTabs found => ',recycledTabs)
-      console.log('RecyclableTabs found => ',deduplicateObjectArr(recycledTabs, 'url'))
+      console.log('RecyclableTabs Dedup => ',deduplicateObjectArr(recycledTabs, 'url'))
       return resolve(recycledTabs)
     }) 
   })
