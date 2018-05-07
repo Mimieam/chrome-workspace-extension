@@ -167,8 +167,14 @@ GCTabs.createURLSearchPatterns = (urls) => {
  */
 GCTabs.recycleTabsAndCreateWindow = (urls) => {
   let t = new Promise(resolve => { 
-    chrome.tabs.query({ url: urls }, tabs => {
-      const recycledTabs = tabs.map(_t => {
+
+    // TODO: i think passing the urls object to query is preventing querying from every window
+    chrome.tabs.query({}, tabs => {
+      console.log('URLS:', urls)
+      console.log('ALL TABS FOUNDS BEFORE RECYCLING', tabs)
+      const recycledTabs = tabs
+        .filter( _t => urls.includes(_t.url))  
+        .map(_t => {
         return {
           'id': _t.id,
           'url': _t.url
