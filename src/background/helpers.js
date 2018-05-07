@@ -41,7 +41,9 @@ GCWindows._createWindow = async (urls = [], discard = false) => {
         }
       )
       // TODO: prevent discard of the very last tab 
-      return await resolve(Promise.all(tabsPromiseArray))
+      await Promise.all(tabsPromiseArray) // wait to be done
+      console.log(newW)
+      resolve(newW) // return the newly created window
     })
   })
 
@@ -68,7 +70,11 @@ GCWindows.createWindow = async (urls = [], discard = false) => {
   console.log('recycledURLs==>', recycledURLs)
   console.log('tobeNewlyCreated==>', tobeNewlyCreated)
 
+  //TODO: create new windows with the new Tabs, then return the id of created window and move the received tabs to it
 
+  const newWindow = await GCWindows._createWindow(tobeNewlyCreated, true)
+  console.log('newWindow= ', newWindow, recycled.map(t => t.id))
+  GCTabs.move(recycled.map(t => t.id), newWindow.id)
   // let w = await new Promise((resolve, reject) => {
   //   return chrome.windows.create({ url: urls[0],  }, async (newW) => { 
   //     console.log(`New Windows Created with ID : ${ newW.id }`)
