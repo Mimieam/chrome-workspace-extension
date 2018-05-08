@@ -22,15 +22,17 @@ GCWindows.getCurrent = async (populate = false) => {
  * This function create a new window with discared tabs if the discard
  * flag is set to true - note that the first and last tabs will not be discared
  * 
- * @param {array} urls - an array of strings
+ * @param {object} options - an array of strings
  * @param {boolean} discard - a flag
  */
-GCWindows._createWindow = async (urls = [], discard = false) => {
+GCWindows._createWindow = async (options = {}, discard = false) => {
   let w = await new Promise((resolve, reject) => {
-    return chrome.windows.create({ url: urls[0],  }, async (newW) => { 
-      console.log(`New Windows Created with ID : ${ newW.id }`)
-      console.log(newW.tabs)
-      const _urls = urls.slice(1) // adding the other tabs..
+    return chrome.windows.create(options, async (newW) => { 
+      console.log(`New Windows Created with ID : ${ newW.id }`, newW, options.urls)
+      // console.log(newW.tabs)
+      options.urls = options.urls ? options.urls : []
+
+      const _urls = options.urls.slice(1) // adding the other tabs..
       const tabsPromiseArray = await _urls.map(
         (_url, idx) => {
           if (idx == _urls.length - 1) {
@@ -71,8 +73,8 @@ GCWindows.createWindow = async (urls = [], discard = false) => {
   console.log('tobeNewlyCreated==>', tobeNewlyCreated)
 
   //TODO: create new windows with the new Tabs, then return the id of created window and move the received tabs to it
-
-  const newWindow = await GCWindows._createWindow(tobeNewlyCreated, true)
+  const options = tobeNewlyCreated ? { url : tobeNewlyCreated } : []  // if this is empty we do not pass anything so a blank tab doesn't randomly get added
+  const newWindow = await GCWindows._createWindow(options, true)
   console.log('newWindow= ', newWindow, recycled.map(t => t.id))
   GCTabs.move(recycled.map(t => t.id), newWindow.id)
   // let w = await new Promise((resolve, reject) => {
