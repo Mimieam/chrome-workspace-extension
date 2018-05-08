@@ -42,7 +42,8 @@ GCWindows._createWindow = async (options = {}, discard = false) => {
           }
         }
       )
-      // TODO: prevent discard of the very last tab 
+      // TODO2: DELETE THE VERY FIRST EMPTY TAB CREATED BY THE NEW WINDOW ACTION  
+      // TODO: prevent discard of the very last tab  
       await Promise.all(tabsPromiseArray) // wait to be done
       console.log(newW)
       resolve(newW) // return the newly created window
