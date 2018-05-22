@@ -174,7 +174,12 @@ new CopyWebpackPlugin([
 
 https://developer.chrome.com/extensions/manifest#web_accessible_resources
 
-### Contentscript not updating??
+### ISSUES
+
+TODO: A silent update is happening when adding multiple WS of the same name.
+We should warn the user and let them decide what to do 
+
+####Contentscript not updating?
 
 In dev mode, when **contentscript** is update - the entire chrome app needs to be reloaded or the old version would still be used. I believe it's because the dev mode Manifest.json is referencing contentscript.bundle.js directly and once loaded chrome will cache this.
 A solutions:

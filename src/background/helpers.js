@@ -42,6 +42,8 @@ GCWindows._createWindow = async (options = {}, discard = false) => {
           }
         }
       )
+      console.log(newW.tabs)
+      await GCTabs.closeEmptyTabs(newW.tabs)
       // TODO2: DELETE THE VERY FIRST EMPTY TAB CREATED BY THE NEW WINDOW ACTION  
       // TODO: prevent discard of the very last tab  
       await Promise.all(tabsPromiseArray) // wait to be done
@@ -78,26 +80,7 @@ GCWindows.createWindow = async (urls = [], discard = false) => {
   const newWindow = await GCWindows._createWindow(options, true)
   console.log('newWindow= ', newWindow, recycled.map(t => t.id))
   GCTabs.move(recycled.map(t => t.id), newWindow.id)
-  // let w = await new Promise((resolve, reject) => {
-  //   return chrome.windows.create({ url: urls[0],  }, async (newW) => { 
-  //     console.log(`New Windows Created with ID : ${ newW.id }`)
-  //     console.log(newW.tabs)
-  //     const _urls = urls.slice(1) // adding the other tabs..
-  //     const tabsPromiseArray = await _urls.map(
-  //       (_url, idx) => {
-  //         if (idx == _urls.length - 1) {
-  //           return GCTabs.createTabAtWindowID(_url, newW.id, false)
-  //         } else {
-  //           return GCTabs.createTabAtWindowID(_url, newW.id, discard)
-  //         }
-  //       }
-  //     )
-  //     // TODO: prevent discard of the very last tab 
-  //     return await resolve(Promise.all(tabsPromiseArray))
-  //   })
-  // })
-
-  // return w
+ 
 }  
 
 GCTabs._query = async (options) => {  
@@ -142,6 +125,27 @@ function splitHostname(url) {
 }
 
 
+/**
+ * Close any empty tabs 
+ * 
+ * @param {array} tabs  - array of chrome tab objects
+ * @returns 
+ */
+GCTabs.closeEmptyTabs = (tabs) => {
+
+  const emptyTabs = tabs
+    .filter(t => t.url.includes('chrome://newtab/'))
+    .map(t => t.id)
+  
+  console.log(emptyTabs)
+  if (emptyTabs.length > 0) {   
+    chrome.tabs.remove(emptyTabs, (t) => {
+      console.log(`${emptyTabs.length||0} empty tabs closed`)
+    })
+  }
+  
+  return emptyTabs
+}
 
 /**
  * This funciton takes in a array of url string and create a set of 
