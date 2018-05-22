@@ -105,6 +105,12 @@ class Popup extends Component {
     const newWindow = await GCWindows.createWindow(tabsURLs, true) 
     // console.log('new Window created with Id: ', newWindow)
   }
+
+  async updateWS(name) {
+    await saveCurrentWindow(name)
+    // await WSM.updateWorkSpace(name), 
+  }
+
   async deleteWS(name) {
     await WSM.removeWorkSpace(name)
     await this.setState({
@@ -155,6 +161,7 @@ class Popup extends Component {
         />
         <WspSnackbar
           onOpenHandler={this.openWS.bind(this)}
+          onUpdateHandler={this.updateWS.bind(this)}
           onDeleteHandler={this.deleteWS.bind(this)}
           onRef={ ref => (this.snack = ref) }
         />

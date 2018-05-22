@@ -3,12 +3,13 @@ process.env.NODE_ENV = 'production';
 
 const path = require('path');
 const fs = require('fs-extra');
-const paths = require('react-scripts/config/paths');
+// const paths = require('react-scripts/config/paths');
+const paths = require('../config/paths');
 const webpack = require('webpack');
 const chalk = require('chalk');
-const config = require('react-scripts/config/webpack.config.dev.js');
+const config = require('../config/webpack.config.dev.js');
 // removes react-dev-utils/webpackHotDevClient.js at first in the array
-config.entry.shift();
+// config.entry.shift();
 
 const { spawn } = require('child_process');
 const spawnOption = {

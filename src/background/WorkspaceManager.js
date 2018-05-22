@@ -26,6 +26,18 @@ export class WorkSpaceManager {
     localStorage.setItem(name, wsStr)
     this.saveWorkSpace()
   }
+  
+  updateWorkSpace(name, wsStr) {
+    //wsStr = stringified and compressed ws data
+    console.log('Updating ', name, ' with ->> ', wsStr)
+    localStorage.setItem(name, wsStr)
+    this.saveWorkSpace()
+  }
+  
+  checkIfExist(name) {
+    return name in localStorage ? true : false
+  }
+
   listAllWorkSpace() {
     const allWS = this.wsArr
     return allWS

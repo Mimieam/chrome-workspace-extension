@@ -49,6 +49,7 @@ class SimpleSnackbar extends React.Component {
   }
   update = () => {
     console.log('Updating Working - ', this.state.activeWorkspace)
+    this.props.onUpdateHandler(this.state.activeWorkspace.name)
   }
 
   delete = () => {
@@ -61,7 +62,7 @@ class SimpleSnackbar extends React.Component {
       <Button key="open" color="secondary" size="small" onClick={this.open}>
         OPEN
       </Button>,
-      <Button disabled key="update" color="secondary" size="small" onClick={this.update}>
+      <Button key="update" color="secondary" size="small" onClick={this.update}>
         UPDATE
       </Button>,
       <Button key="delete" color="secondary" size="small" onClick={this.delete}>
